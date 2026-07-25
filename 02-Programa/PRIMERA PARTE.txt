@@ -1,0 +1,67 @@
+UNIVERSIDAD AGRARIA DEL ECUADOR
+CARRERA: CIENCIAS DE LA COMPUTACIÓN – MODALIDAD EN LÍNEA
+LENGUAJE DE PROGRAMACIÓN 2
+Curso: Tercer Semestre
+Profesor: Ing. Bryan Vélez MS.c
+TALLER 12
+Avance de Implementación del Proyecto Final (25%)
+1. Descripción de la Actividad
+Este taller corresponde al primer corte de avance de la implementación (programación) del
+Proyecto Final, correspondiente a la semana 12 del cronograma de trabajo por proyectos. En
+esta entrega cada grupo debe presentar un 25% de avance funcional del sistema que está
+desarrollando, conforme al alcance definido en su documento de especificación.
+Esta entrega es de carácter formativo y de seguimiento: permite verificar que el grupo ya inició
+la codificación del sistema y que el diseño planteado en el documento es viable de implementar.
+No sustituye la calificación final del proyecto (rúbrica sobre 2.50 puntos), pero es un requisito
+para continuar con el desarrollo.
+2. ¿Qué Deben Entregar?
+El avance de implementación entregado en este taller debe evidenciar aproximadamente el 25%
+de las funcionalidades núcleo del sistema, cubriendo como mínimo:
+1. Estructura inicial del proyecto (organización de carpetas y/o clases) en el lenguaje de
+programación utilizado en el curso.
+2. Implementación de al menos 1 clase del dominio del problema, con sus atributos y
+métodos definidos, aplicando encapsulamiento.
+3. Avance inicial de al menos una estructura de datos (lista enlazada, pila o cola) que se
+utilizará en el sistema, aunque aún no esté integrada al 100% con el resto del programa.
+4. Creación de la base de datos en DB Browser for SQLite, con al menos las tablas principales
+definidas (puede no estar conectada aún al 100% desde el código).
+5. Avance inicial de la interfaz gráfica (aunque sea una versión preliminar, sin todas las
+funcionalidades).
+Las funcionalidades restantes, la integración completa de las estructuras de datos, los algoritmos
+de ordenamiento y búsqueda, la conexión completa a la base de datos y la interfaz gráfica
+terminada se completarán progresivamente durante la semana 13 y se entregarán en su versión
+final en la semana 14.
+3. Formato y Condiciones de Entrega
+• El avance debe entregarse como proyecto de código fuente comprimido (.zip)
+• Debe incluirse el archivo de base de datos (.sqlite / .db) creado en DB Browser for SQLite,
+aunque el avance de datos sea parcial.
+UNIVERSIDAD AGRARIA DEL ECUADOR
+CARRERA: CIENCIAS DE LA COMPUTACIÓN – MODALIDAD EN LÍNEA
+• Debe subirse a la actividad Taller 12 habilitada en el aula virtual (Moodle).
+• Solo un integrante por grupo debe realizar la entrega, indicando el número de grupo y los
+nombres de todos los integrantes.
+• El código entregado debe ser coherente con el diseño (diagrama de clases y modelo de
+datos) presentado en la Tarea 12.
+• Fecha límite de entrega: hasta el último día de la semana 12.
+4. Rúbrica de Evaluación del Taller 12
+Esta entrega parcial se califica sobre 10 puntos, como actividad de seguimiento del proyecto:
+Criterio Descripción Puntos
+Clases del dominio implementadas Al menos 2-3 clases correctamente definidas, con
+atributos, métodos y encapsulamiento aplicado. 2.5
+Avance de estructura de datos Evidencia de trabajo inicial en una lista, pila o cola
+relacionada con la lógica del sistema. 2.0
+Base de datos creada en DB Browser Tablas principales definidas correctamente en SQLite,
+coherentes con el modelo de datos propuesto. 2.0
+Avance de interfaz gráfica Interfaz preliminar funcional, aunque no cubra todas las
+funcionalidades del sistema. 1.5
+Organización del código y cumplimiento de
+entrega
+Código ordenado, comprensible y entregado dentro del
+plazo establecido. 2.0
+TOTAL 10.0
+5. Consideraciones Finales
+Este taller busca asegurar que el desarrollo técnico del proyecto avance en paralelo con la
+documentación entregada en la Tarea 12. Se recomienda aprovechar la retroalimentación del
+docente sobre este avance para corregir a tiempo cualquier problema de diseño antes de
+continuar con la implementación completa.
+Cualquier duda sobre el avance esperado en esta entrega debe consultarse.
