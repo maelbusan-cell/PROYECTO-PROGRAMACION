@@ -911,19 +911,41 @@ class VentanaPrincipal:
             self._mostrar("No hay movimientos para deshacer")
 
     def _pedido(self):
+        ventana = tk.Toplevel(self._ventana)
+        ventana.title("Nuevo Pedido")
+        ventana.geometry("450x300")
+        tk.Label(ventana, text="Cliente:").grid(row=0, column=0, padx=5, pady=5, sticky="e")
+        entry_cliente = tk.Entry(ventana, width=30)
+        entry_cliente.grid(row=0, column=1, padx=5, pady=5)
+        entry_cliente.insert(0, "Cliente")
+        tk.Label(ventana, text="Productos (codigo cantidad):").grid(row=1, column=0, columnspan=2, padx=5, pady=2)
+        text = scrolledtext.ScrolledText(ventana, height=10, font=("Consolas", 10))
+        text.grid(row=2, column=0, columnspan=2, padx=5, pady=5)
+        text.insert(tk.END, "A001 5\nB002 3")
+        resultado = {}
+        def aceptar():
+            resultado["cliente"] = entry_cliente.get()
+            resultado["lineas"] = text.get("1.0", tk.END).strip().split("\n")
+            ventana.destroy()
+        tk.Button(ventana, text="Crear Pedido", command=aceptar).grid(row=3, column=0, columnspan=2, pady=10)
+        ventana.grab_set()
+        ventana.wait_window()
+        if not resultado.get("cliente"):
+            return
         self._contador_pedidos += 1
-        cli = simpledialog.askstring("Pedido", "Cliente:") or "Cliente"
-        pedido = Pedido(self._contador_pedidos, cli)
-        while True:
-            cod = simpledialog.askstring("Pedido", "Codigo de producto (vacio = terminar):")
-            if not cod: break
-            prod = self._inventario.buscar_producto(cod.strip())
+        pedido = Pedido(self._contador_pedidos, resultado["cliente"])
+        for linea in resultado.get("lineas", []):
+            partes = linea.strip().split()
+            if len(partes) < 1:
+                continue
+            cod = partes[0]
+            cant = int(partes[1]) if len(partes) > 1 else 1
+            prod = self._inventario.buscar_producto(cod)
             if prod:
-                cant = int(simpledialog.askstring("Pedido", "Cantidad:") or 1)
                 pedido.agregar_producto(prod, cant)
                 self._mostrar(f"  -> {prod.nombre} x{cant}")
             else:
-                self._mostrar("  Producto no encontrado")
+                self._mostrar(f"  Producto no encontrado: {cod}")
         self._inventario.agregar_pedido(pedido)
         self._mostrar(f"OK Pedido #{pedido.id_pedido} agregado - Total: ${pedido.calcular_total():.2f}")
 
