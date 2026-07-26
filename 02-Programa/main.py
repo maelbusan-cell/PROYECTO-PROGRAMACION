@@ -1,14 +1,12 @@
-from clases.inventario import Inventario
-from interfaz.ventana_principal import VentanaPrincipal
-from base_datos.conexion import ConexionDB
+from interfaz import VentanaPrincipal, Inventario, ConexionDB
 
 
 def main():
     db = ConexionDB()
     db.conectar()
     db.crear_tablas()
-    inventario = Inventario(db=db)
-    app = VentanaPrincipal(inventario)
+    inv = Inventario(db=db)
+    app = VentanaPrincipal(inv)
     app.ejecutar()
     db.desconectar()
 
