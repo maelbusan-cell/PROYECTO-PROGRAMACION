@@ -765,18 +765,24 @@ class VentanaPrincipal:
         ttk.Button(g1, text="Listar Productos", command=self._listar, width=18).pack(pady=2)
         ttk.Button(g1, text="Buscar Producto", command=self._buscar, width=18).pack(pady=2)
 
-        # INVENTARIO
-        g2 = ttk.LabelFrame(marco, text="Inventario", padding=5)
+        # PROVEEDORES
+        g2 = ttk.LabelFrame(marco, text="Proveedores", padding=5)
         g2.pack(side=tk.LEFT, padx=5)
-        ttk.Button(g2, text="Entrada/Salida", command=self._movimiento, width=18).pack(pady=2)
-        ttk.Button(g2, text="Deshacer", command=self._deshacer, width=18).pack(pady=2)
-        ttk.Button(g2, text="Bajo Stock", command=self._bajo_stock, width=18).pack(pady=2)
+        ttk.Button(g2, text="Registrar Proveedor", command=self._reg_proveedor, width=18).pack(pady=2)
+        ttk.Button(g2, text="Listar Proveedores", command=self._listar_proveedores, width=18).pack(pady=2)
+
+        # INVENTARIO
+        g3 = ttk.LabelFrame(marco, text="Inventario", padding=5)
+        g3.pack(side=tk.LEFT, padx=5)
+        ttk.Button(g3, text="Entrada/Salida", command=self._movimiento, width=18).pack(pady=2)
+        ttk.Button(g3, text="Deshacer", command=self._deshacer, width=18).pack(pady=2)
+        ttk.Button(g3, text="Bajo Stock", command=self._bajo_stock, width=18).pack(pady=2)
 
         # PEDIDOS
-        g3 = ttk.LabelFrame(marco, text="Pedidos", padding=5)
-        g3.pack(side=tk.LEFT, padx=5)
-        ttk.Button(g3, text="Nuevo Pedido", command=self._pedido, width=18).pack(pady=2)
-        ttk.Button(g3, text="Procesar Pedido", command=self._procesar_pedido, width=18).pack(pady=2)
+        g4 = ttk.LabelFrame(marco, text="Pedidos", padding=5)
+        g4.pack(side=tk.LEFT, padx=5)
+        ttk.Button(g4, text="Nuevo Pedido", command=self._pedido, width=18).pack(pady=2)
+        ttk.Button(g4, text="Procesar Pedido", command=self._procesar_pedido, width=18).pack(pady=2)
 
         self._output = scrolledtext.ScrolledText(self._ventana, height=20, font=("Consolas", 10))
         self._output.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
@@ -787,23 +793,43 @@ class VentanaPrincipal:
         self._output.insert(tk.END, texto + "\n")
         self._output.see(tk.END)
 
+    def _form_producto(self, titulo, campos):
+        ventana = tk.Toplevel(self._ventana)
+        ventana.title(titulo)
+        ventana.geometry("500x300")
+        entradas = {}
+        for i, (label, default) in enumerate(campos):
+            tk.Label(ventana, text=label, anchor="e", width=18).grid(row=i, column=0, padx=5, pady=4, sticky="e")
+            e = tk.Entry(ventana, width=30)
+            e.grid(row=i, column=1, padx=5, pady=4)
+            if default:
+                e.insert(0, str(default))
+            entradas[label] = e
+        resultado = {}
+        def aceptar():
+            for label, _ in campos:
+                resultado[label] = entradas[label].get()
+            ventana.destroy()
+        tk.Button(ventana, text="Aceptar", command=aceptar, width=12).grid(row=len(campos), column=0, columnspan=2, pady=10)
+        ventana.grab_set()
+        ventana.wait_window()
+        return resultado
+
     def _reg_producto(self):
-        cod = simpledialog.askstring("Producto", "Codigo:")
-        if not cod: return
-        nom = simpledialog.askstring("Producto", "Nombre:")
-        if not nom: return
-        cat = simpledialog.askstring("Producto", "Categoria:") or ""
+        campos = [("Codigo", None), ("Nombre", None), ("Categoria", ""),
+                  ("Precio", 0), ("Stock actual", 0), ("Stock minimo", 0), ("Stock maximo", 999)]
+        datos = self._form_producto("Registrar Producto", campos)
+        if not datos or not datos.get("Codigo") or not datos.get("Nombre"):
+            return
         try:
-            pre = float(simpledialog.askstring("Producto", "Precio:") or 0)
-            stock = int(simpledialog.askstring("Producto", "Stock actual:") or 0)
-            smin = int(simpledialog.askstring("Producto", "Stock minimo (0):") or 0)
-            smax = int(simpledialog.askstring("Producto", "Stock maximo (999):") or 999)
+            p = Producto(datos["Codigo"], datos["Nombre"], datos.get("Categoria", ""),
+                         float(datos["Precio"]), int(datos["Stock actual"]),
+                         int(datos.get("Stock minimo", 0)), int(datos.get("Stock maximo", 999)))
         except:
             messagebox.showerror("Error", "Valores numericos invalidos")
             return
-
-        self._inventario.registrar_producto(Producto(cod, nom, cat, pre, stock, smin, smax))
-        self._mostrar(f"OK Producto registrado: {cod} - {nom}")
+        self._inventario.registrar_producto(p)
+        self._mostrar(f"OK Producto registrado: {datos['Codigo']} - {datos['Nombre']}")
 
     def _listar(self):
         prods = self._inventario.ordenar_burbuja("codigo")
@@ -836,30 +862,40 @@ class VentanaPrincipal:
                 self._mostrar("Producto no encontrado")
 
     def _reg_proveedor(self):
-        ruc = simpledialog.askstring("Proveedor", "RUC:")
-        if not ruc: return
-        nom = simpledialog.askstring("Proveedor", "Nombre:")
-        if not nom: return
-        tel = simpledialog.askstring("Proveedor", "Telefono:") or ""
-        email = simpledialog.askstring("Proveedor", "Email:") or ""
-        dirr = simpledialog.askstring("Proveedor", "Direccion:") or ""
-        self._inventario.registrar_proveedor(Proveedor(ruc, nom, tel, email, dirr))
-        self._mostrar(f"OK Proveedor registrado: {nom}")
+        campos = [("RUC", None), ("Nombre", None), ("Telefono", ""), ("Email", ""), ("Direccion", "")]
+        datos = self._form_producto("Registrar Proveedor", campos)
+        if not datos or not datos.get("RUC") or not datos.get("Nombre"):
+            return
+        p = Proveedor(datos["RUC"], datos["Nombre"], datos.get("Telefono", ""),
+                      datos.get("Email", ""), datos.get("Direccion", ""))
+        self._inventario.registrar_proveedor(p)
+        self._mostrar(f"OK Proveedor registrado: {datos['Nombre']}")
+
+    def _listar_proveedores(self):
+        provs = self._inventario.listar_proveedores()
+        self._mostrar("=== PROVEEDORES ===")
+        if not provs:
+            self._mostrar("(vacio)")
+        for p in provs:
+            self._mostrar(p.mostrar_info())
 
     def _movimiento(self):
-        cod = simpledialog.askstring("Movimiento", "Codigo del producto:")
-        if not cod: return
-        prod = self._inventario.buscar_producto(cod.strip())
+        campos = [("Codigo producto", None), ("Cantidad", 0), ("Tipo (entrada/salida)", "entrada")]
+        datos = self._form_producto("Movimiento", campos)
+        if not datos or not datos.get("Codigo producto"):
+            return
+        cod = datos["Codigo producto"].strip()
+        prod = self._inventario.buscar_producto(cod)
         if not prod:
             self._mostrar("Producto no encontrado")
             return
         try:
-            cant = int(simpledialog.askstring("Movimiento", "Cantidad:") or 0)
+            cant = int(datos["Cantidad"])
         except:
+            self._mostrar("Cantidad invalida")
             return
-        tipo = simpledialog.askstring("Movimiento", "Tipo (entrada/salida):")
-        if not tipo: return
-        if tipo.lower() == "entrada":
+        tipo = datos.get("Tipo (entrada/salida)", "entrada").strip().lower()
+        if tipo == "entrada":
             mov = Entrada(prod, cant)
             self._inventario.entrada_mercancia(mov)
         else:
