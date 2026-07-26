@@ -790,6 +790,7 @@ class VentanaPrincipal:
         ttk.Button(self._ventana, text="Salir", command=self._ventana.quit).pack(pady=5)
 
     def _mostrar(self, texto):
+        self._output.delete("1.0", tk.END)
         self._output.insert(tk.END, texto + "\n")
         self._output.see(tk.END)
 
@@ -833,11 +834,12 @@ class VentanaPrincipal:
 
     def _listar(self):
         prods = self._inventario.ordenar_burbuja("codigo")
-        self._mostrar("=== PRODUCTOS (Burbuja O(n2)) ===")
+        lineas = ["=== PRODUCTOS (Burbuja O(n2)) ==="]
         if not prods:
-            self._mostrar("(vacio)")
+            lineas.append("(vacio)")
         for p in prods:
-            self._mostrar(p.mostrar_info())
+            lineas.append(p.mostrar_info())
+        self._mostrar("\n".join(lineas))
 
     def _buscar(self):
         tipo = simpledialog.askstring("Buscar", "Buscar por (codigo/nombre):")
@@ -847,8 +849,7 @@ class VentanaPrincipal:
             if not cod: return
             idx, prod = self._inventario.buscar_binaria_por_codigo(cod.strip())
             if prod:
-                self._mostrar(f"Encontrado en posicion {idx}")
-                self._mostrar(prod.mostrar_info())
+                self._mostrar(f"Encontrado en posicion {idx}\n{prod.mostrar_info()}")
             else:
                 self._mostrar("Producto no encontrado")
         else:
@@ -856,8 +857,7 @@ class VentanaPrincipal:
             if not nom: return
             idx, prod = self._inventario.buscar_lineal_por_nombre(nom.strip())
             if prod:
-                self._mostrar(f"Encontrado en posicion {idx}")
-                self._mostrar(prod.mostrar_info())
+                self._mostrar(f"Encontrado en posicion {idx}\n{prod.mostrar_info()}")
             else:
                 self._mostrar("Producto no encontrado")
 
@@ -873,11 +873,12 @@ class VentanaPrincipal:
 
     def _listar_proveedores(self):
         provs = self._inventario.listar_proveedores()
-        self._mostrar("=== PROVEEDORES ===")
+        lineas = ["=== PROVEEDORES ==="]
         if not provs:
-            self._mostrar("(vacio)")
+            lineas.append("(vacio)")
         for p in provs:
-            self._mostrar(p.mostrar_info())
+            lineas.append(p.mostrar_info())
+        self._mostrar("\n".join(lineas))
 
     def _movimiento(self):
         campos = [("Codigo producto", None), ("Cantidad", 0), ("Tipo (entrada/salida)", "entrada")]
@@ -934,6 +935,7 @@ class VentanaPrincipal:
             return
         self._contador_pedidos += 1
         pedido = Pedido(self._contador_pedidos, resultado["cliente"])
+        lineas = []
         for linea in resultado.get("lineas", []):
             partes = linea.strip().split()
             if len(partes) < 1:
@@ -943,11 +945,12 @@ class VentanaPrincipal:
             prod = self._inventario.buscar_producto(cod)
             if prod:
                 pedido.agregar_producto(prod, cant)
-                self._mostrar(f"  -> {prod.nombre} x{cant}")
+                lineas.append(f"  -> {prod.nombre} x{cant}")
             else:
-                self._mostrar(f"  Producto no encontrado: {cod}")
+                lineas.append(f"  Producto no encontrado: {cod}")
         self._inventario.agregar_pedido(pedido)
-        self._mostrar(f"OK Pedido #{pedido.id_pedido} agregado - Total: ${pedido.calcular_total():.2f}")
+        lineas.append(f"OK Pedido #{pedido.id_pedido} agregado - Total: ${pedido.calcular_total():.2f}")
+        self._mostrar("\n".join(lineas))
 
     def _procesar_pedido(self):
         pedido = self._inventario.procesar_pedido()
@@ -958,11 +961,12 @@ class VentanaPrincipal:
 
     def _bajo_stock(self):
         bajos = self._inventario.reporte_bajo_stock()
-        self._mostrar("=== BAJO STOCK ===")
+        lineas = ["=== BAJO STOCK ==="]
         if not bajos:
-            self._mostrar("Todos los productos tienen stock suficiente")
+            lineas.append("Todos los productos tienen stock suficiente")
         for p in bajos:
-            self._mostrar(p.mostrar_info())
+            lineas.append(p.mostrar_info())
+        self._mostrar("\n".join(lineas))
 
     def ejecutar(self):
         self._ventana.mainloop()
